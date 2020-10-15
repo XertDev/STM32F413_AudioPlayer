@@ -8,19 +8,56 @@
 #ifndef LCD_LCDDISPLAY_HPP_
 #define LCD_LCDDISPLAY_HPP_
 
+#include "Common.hpp"
+#include "LCDIOSettings.hpp"
+#include "LCDConstants.hpp"
 #include "stm32f4xx_hal.h"
+
+enum LCDError {
+	LCD_OK=0,
+	LCD_NOT_FOUND
+};
 
 class LCDDisplay {
 public:
-	LCDDisplay(TIM_HandleTypeDef& backlight_pwm, uint32_t backlight_channel);
+	LCDDisplay(LCDIOSettings io_settings);
 	~LCDDisplay();
+	LCDError init();
+
 
 	void setBacklight(uint8_t level);
+	void displayOn();
+	void displayOff();
+
+	void clear(Color color);
+
+	constexpr uint16_t width();
+	constexpr uint16_t height();
+
+	void setCursor(uint16_t x, uint16_t y);
+
+	void drawHLine(Color color, uint16_t x, uint16_t y, uint16_t length);
+
+	void setOrientation(ST7789H2::ORIENTATION orientation);
+
 private:
-	TIM_HandleTypeDef& backlight_pwm_;
-	uint32_t backlight_channel_;
+	LCDIOSettings io_settings_;
 
 	uint8_t level_;
+
+	LCDDRawProperties properties_;
+
+	void resetLCD();
+	void initLCD();
+
+	void writeReg(uint8_t reg);
+	void writeRegData(uint8_t reg, uint8_t* data, uint8_t count);
+	void writeData(uint16_t data);
+	uint16_t readData();
+
+	uint16_t readReg(uint8_t reg);
+
+	uint16_t id();
 };
 
 #endif /* LCD_LCDDISPLAY_HPP_ */
