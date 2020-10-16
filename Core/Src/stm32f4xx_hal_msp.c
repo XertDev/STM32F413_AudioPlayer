@@ -490,27 +490,43 @@ static void HAL_FSMC_MspInit(void){
   PG0   ------> FSMC_A10
   PG1   ------> FSMC_A11
   PE7   ------> FSMC_D4
+  PE7   ------> FSMC_DA4
   PE8   ------> FSMC_D5
+  PE8   ------> FSMC_DA5
   PE9   ------> FSMC_D6
+  PE9   ------> FSMC_DA6
   PE10   ------> FSMC_D7
+  PE10   ------> FSMC_DA7
   PE11   ------> FSMC_D8
+  PE11   ------> FSMC_DA8
   PE12   ------> FSMC_D9
+  PE12   ------> FSMC_DA9
   PE13   ------> FSMC_D10
+  PE13   ------> FSMC_DA10
   PE14   ------> FSMC_D11
+  PE14   ------> FSMC_DA11
   PE15   ------> FSMC_D12
+  PE15   ------> FSMC_DA12
   PD8   ------> FSMC_D13
+  PD8   ------> FSMC_DA13
   PD9   ------> FSMC_D14
+  PD9   ------> FSMC_DA14
   PD10   ------> FSMC_D15
+  PD10   ------> FSMC_DA15
   PD11   ------> FSMC_A16
   PD12   ------> FSMC_A17
   PD14   ------> FSMC_D0
+  PD14   ------> FSMC_DA0
   PD15   ------> FSMC_D1
+  PD15   ------> FSMC_DA1
   PG2   ------> FSMC_A12
   PG3   ------> FSMC_A13
   PG4   ------> FSMC_A14
   PG5   ------> FSMC_A15
   PD0   ------> FSMC_D2
+  PD0   ------> FSMC_DA2
   PD1   ------> FSMC_D3
+  PD1   ------> FSMC_DA3
   PD4   ------> FSMC_NOE
   PD5   ------> FSMC_NWE
   PD7   ------> FSMC_NE1
@@ -535,30 +551,36 @@ static void HAL_FSMC_MspInit(void){
   GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = LCD_PSRAM_D4_Pin|LCD_PSRAM_D5_Pin|LCD_PSRAM_D6_Pin|LCD_PSRAM_D7_Pin
-                          |LCD_PSRAM_D8_Pin|LCD_PSRAM_D9_Pin|LCD_PSRAM_D10_Pin|LCD_PSRAM_D11_Pin
-                          |LCD_PSRAM_D12_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-  GPIO_InitStruct.Pin = LCD_PSRAM_D13_Pin|LCD_PSRAM_D14_Pin|LCd_PSRAM_D15_Pin|PSRAM_A16_Pin
-                          |PSRAM_A17_Pin|LCD_PSRAM_D0_Pin|LCD_PSRAM_D1_Pin|LCD_PSRAM_D2_Pin
-                          |LCD_PSRAM_D3_Pin|LCD_PSRAM_NOE_Pin|LCD_PSRAM_NWE_Pin|PSRAM_NE1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  GPIO_InitStruct.Pin = PSRAM_NBL0_Pin|PSRAM_NBL1_Pin;
+  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_8|PSRAM_NBL0_Pin|PSRAM_NBL1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12
+                          |GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_14
+                          |GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = PSRAM_A16_Pin|PSRAM_A17_Pin|GPIO_PIN_0|GPIO_PIN_1
+                          |LCD_PSRAM_NOE_Pin|LCD_PSRAM_NWE_Pin|PSRAM_NE1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FSMC;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /* USER CODE BEGIN FSMC_MspInit 1 */
 
@@ -602,27 +624,43 @@ static void HAL_FSMC_MspDeInit(void){
   PG0   ------> FSMC_A10
   PG1   ------> FSMC_A11
   PE7   ------> FSMC_D4
+  PE7   ------> FSMC_DA4
   PE8   ------> FSMC_D5
+  PE8   ------> FSMC_DA5
   PE9   ------> FSMC_D6
+  PE9   ------> FSMC_DA6
   PE10   ------> FSMC_D7
+  PE10   ------> FSMC_DA7
   PE11   ------> FSMC_D8
+  PE11   ------> FSMC_DA8
   PE12   ------> FSMC_D9
+  PE12   ------> FSMC_DA9
   PE13   ------> FSMC_D10
+  PE13   ------> FSMC_DA10
   PE14   ------> FSMC_D11
+  PE14   ------> FSMC_DA11
   PE15   ------> FSMC_D12
+  PE15   ------> FSMC_DA12
   PD8   ------> FSMC_D13
+  PD8   ------> FSMC_DA13
   PD9   ------> FSMC_D14
+  PD9   ------> FSMC_DA14
   PD10   ------> FSMC_D15
+  PD10   ------> FSMC_DA15
   PD11   ------> FSMC_A16
   PD12   ------> FSMC_A17
   PD14   ------> FSMC_D0
+  PD14   ------> FSMC_DA0
   PD15   ------> FSMC_D1
+  PD15   ------> FSMC_DA1
   PG2   ------> FSMC_A12
   PG3   ------> FSMC_A13
   PG4   ------> FSMC_A14
   PG5   ------> FSMC_A15
   PD0   ------> FSMC_D2
+  PD0   ------> FSMC_DA2
   PD1   ------> FSMC_D3
+  PD1   ------> FSMC_DA3
   PD4   ------> FSMC_NOE
   PD5   ------> FSMC_NWE
   PD7   ------> FSMC_NE1
@@ -637,13 +675,13 @@ static void HAL_FSMC_MspDeInit(void){
   HAL_GPIO_DeInit(GPIOG, PSRAM_A10_Pin|PSRAM_A11_Pin|PSRAM_A12_Pin|PSRAM_A13_Pin
                           |PSRAM_A14_Pin|PSRAM_A15_Pin|LCD_NE3_Pin);
 
-  HAL_GPIO_DeInit(GPIOE, LCD_PSRAM_D4_Pin|LCD_PSRAM_D5_Pin|LCD_PSRAM_D6_Pin|LCD_PSRAM_D7_Pin
-                          |LCD_PSRAM_D8_Pin|LCD_PSRAM_D9_Pin|LCD_PSRAM_D10_Pin|LCD_PSRAM_D11_Pin
-                          |LCD_PSRAM_D12_Pin|PSRAM_NBL0_Pin|PSRAM_NBL1_Pin);
+  HAL_GPIO_DeInit(GPIOE, GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10
+                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14
+                          |GPIO_PIN_15|PSRAM_NBL0_Pin|PSRAM_NBL1_Pin);
 
-  HAL_GPIO_DeInit(GPIOD, LCD_PSRAM_D13_Pin|LCD_PSRAM_D14_Pin|LCd_PSRAM_D15_Pin|PSRAM_A16_Pin
-                          |PSRAM_A17_Pin|LCD_PSRAM_D0_Pin|LCD_PSRAM_D1_Pin|LCD_PSRAM_D2_Pin
-                          |LCD_PSRAM_D3_Pin|LCD_PSRAM_NOE_Pin|LCD_PSRAM_NWE_Pin|PSRAM_NE1_Pin);
+  HAL_GPIO_DeInit(GPIOD, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|PSRAM_A16_Pin
+                          |PSRAM_A17_Pin|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_0
+                          |GPIO_PIN_1|LCD_PSRAM_NOE_Pin|LCD_PSRAM_NWE_Pin|PSRAM_NE1_Pin);
 
   /* USER CODE BEGIN FSMC_MspDeInit 1 */
 

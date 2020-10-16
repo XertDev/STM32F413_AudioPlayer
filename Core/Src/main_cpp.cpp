@@ -2,11 +2,36 @@
 #include "LCD/LCDDisplay.hpp"
 #include "LCD/LCDIOSettings.hpp"
 #include "LCD/LCDConstants.hpp"
+#include "Touch/TouchPanel.hpp"
 #include "../stm32f4xx_hal.h"
 #include "fatfs.h"
 
 extern TIM_HandleTypeDef htim9;
 extern SD_HandleTypeDef hsd;
+extern FMPI2C_HandleTypeDef hfmpi2c1;
+
+void resetFMPI2C() {
+	HAL_FMPI2C_DeInit(&hfmpi2c1);
+	  hfmpi2c1.Instance = FMPI2C1;
+	  hfmpi2c1.Init.Timing = 0x00606092;
+	  hfmpi2c1.Init.OwnAddress1 = 0;
+	  hfmpi2c1.Init.AddressingMode = FMPI2C_ADDRESSINGMODE_7BIT;
+	  hfmpi2c1.Init.DualAddressMode = FMPI2C_DUALADDRESS_DISABLE;
+	  hfmpi2c1.Init.OwnAddress2 = 0;
+	  hfmpi2c1.Init.OwnAddress2Masks = FMPI2C_OA2_NOMASK;
+	  hfmpi2c1.Init.GeneralCallMode = FMPI2C_GENERALCALL_DISABLE;
+	  hfmpi2c1.Init.NoStretchMode = FMPI2C_NOSTRETCH_DISABLE;
+	  if (HAL_FMPI2C_Init(&hfmpi2c1) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+	  /** Configure Analogue filter
+	  */
+	  if (HAL_FMPI2CEx_ConfigAnalogFilter(&hfmpi2c1, FMPI2C_ANALOGFILTER_ENABLE) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+}
 
 LCDIOSettings setting {
 	htim9,
@@ -17,14 +42,21 @@ LCDIOSettings setting {
 };
 
 
+
 extern "C" void main_cpp();
 void main_cpp()
 {
 	LCDDisplay display(setting);
 
+
 	auto d_error = display.init();
+	TouchPanel t_panel(&hfmpi2c1, 0x70, &resetFMPI2C);
+	auto test = t_panel.id();
+	t_panel.setPollingMode();
+
 	display.setOrientation(ST7789H2::ORIENTATION::PORTRAIT);
 	  HAL_Delay(50);
+
 
   bool last_state = false;
   while (1)
