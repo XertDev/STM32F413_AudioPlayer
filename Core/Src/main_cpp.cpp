@@ -54,7 +54,7 @@ void main_cpp()
 	auto test = t_panel.id();
 	t_panel.setPollingMode();
 
-	display.setOrientation(ST7789H2::ORIENTATION::PORTRAIT);
+	display.setOrientation(ST7789H2::ORIENTATION::LANDSCAPE_ROT180);
 	  HAL_Delay(50);
 
 
@@ -89,6 +89,12 @@ void main_cpp()
 			  display.clear(0x07E0);
 			  HAL_Delay(2000);
 			  display.clear(0xA145);
+			  display.setBackgroundColor(0x07E0);
+			  display.drawString(77, 40, "Stara");
+			  display.drawRect(70, 30, 96, 44, 0x07E0);
+			  display.setBackgroundColor(0xA145);
+			  display.drawString(69, 100, "GRONIA");
+			  display.drawRect(60, 90, 120, 44, 0x07E0);
 		  }
 
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);

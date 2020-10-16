@@ -36,7 +36,19 @@ public:
 
 	void setCursor(uint16_t x, uint16_t y);
 
-	void drawHLine(Color color, uint16_t x, uint16_t y, uint16_t length);
+	void drawPixel(uint16_t x, uint16_t y, Color color);
+
+	void drawHLine(uint16_t x, uint16_t y, uint16_t length, Color color);
+	void drawVLine(uint16_t x, uint16_t y, uint16_t length, Color color);
+
+	void drawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, Color color);
+	void fillRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, Color color);
+
+	void drawChar(uint16_t x, uint16_t y, char sym);
+	void drawString(uint16_t x, uint16_t y, const char* text);
+
+	void setBackgroundColor(Color color);
+	void setTextColor(Color color);
 
 	void setOrientation(ST7789H2::ORIENTATION orientation);
 

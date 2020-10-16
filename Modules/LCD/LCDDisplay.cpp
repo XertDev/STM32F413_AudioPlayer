@@ -262,7 +262,7 @@ constexpr uint16_t LCDDisplay::height() {
 	return ST7789H2::LCD_HEIGHT;
 }
 
-void LCDDisplay::drawHLine(Color color, uint16_t x, uint16_t y, uint16_t length) {
+void LCDDisplay::drawHLine(uint16_t x, uint16_t y, uint16_t length, Color color) {
 	setCursor(x, y);
 	writeReg(ST7789H2::WRITE_RAM);
 
@@ -270,6 +270,85 @@ void LCDDisplay::drawHLine(Color color, uint16_t x, uint16_t y, uint16_t length)
 		writeData(color);
 	}
 }
+
+
+void LCDDisplay::drawVLine(uint16_t x, uint16_t y, uint16_t length, Color color) {
+	for(uint16_t i = 0; i < length; ++i) {
+		drawPixel(x, y+i, color);
+	}
+}
+
+void LCDDisplay::drawRect(uint16_t x, uint16_t y, uint16_t width,
+		uint16_t height, Color color) {
+	// +---2---+
+	// |       |
+	// 1       3
+	// |       |
+	// +---4---+
+
+	drawVLine(x, y, height, color);   		//1
+	drawHLine(x, y, width, color);  		//2
+	drawVLine(x+width, y, height, color);	//3
+	drawHLine(x, y+height, width, color);	//4
+}
+
+void LCDDisplay::fillRect(uint16_t x, uint16_t y, uint16_t width,
+		uint16_t height, Color color) {
+	for(uint16_t i = 0; i < height; ++i) {
+		drawHLine(x, y+i, width, color);
+	}
+}
+
+void LCDDisplay::drawChar(uint16_t x, uint16_t y, char sym) {
+	//based on official draw char from CUBE MX
+	const auto& height = properties_.font->height;
+	const auto& width = properties_.font->width;
+	const uint8_t font_width_bytes = (width+7)/8;
+
+	const uint16_t sym_id = (sym - ' ') * height * font_width_bytes;
+	const uint8_t* sym_data = &properties_.font->table[sym_id];
+
+	const uint16_t offset = 8 * font_width_bytes- width;
+	uint32_t line = 0;
+
+	for(uint16_t i = 0; i < height; ++i) {
+		const uint8_t* pchar = (uint8_t*)sym_data + font_width_bytes * i;
+		switch(font_width_bytes) {
+			case 1:
+				line = pchar[0];
+				break;
+
+			case 2:
+				line = (pchar[0] << 8) | pchar[1];
+				break;
+
+			case 3:
+			default:
+				line = (pchar[0]<< 16) | (pchar[1]<< 8) | pchar[2];
+		}
+
+		for (uint16_t j = 0; j < width; ++j) {
+			if(line & (1 << (width - j + offset - 1))) {
+				drawPixel(x+j, y+i, properties_.text_color);
+			} else {
+				drawPixel(x+j, y+i, properties_.background_color);
+			}
+		}
+	}
+
+}
+
+void LCDDisplay::drawString(uint16_t x, uint16_t y, const char *text) {
+	const char* curr_sym = text;
+	uint16_t curr_x = x;
+	while(*curr_sym != 0) {
+		drawChar(curr_x, y, *curr_sym);
+
+		curr_x += properties_.font->width;
+		++curr_sym;
+	}
+}
+
 
 void LCDDisplay::setCursor(uint16_t x, uint16_t y) {
 	uint8_t parameter[4];
@@ -288,6 +367,21 @@ void LCDDisplay::setCursor(uint16_t x, uint16_t y) {
 	writeRegData(ST7789H2::RASET, parameter, 4);
 }
 
+void LCDDisplay::drawPixel(uint16_t x, uint16_t y, Color color) {
+	setCursor(x, y);
+	writeReg(ST7789H2::WRITE_RAM);
+	writeData(color);
+}
+
+
+void LCDDisplay::setBackgroundColor(Color color) {
+	properties_.background_color = color;
+}
+
+void LCDDisplay::setTextColor(Color color) {
+	properties_.text_color = color;
+}
+
 uint16_t LCDDisplay::id() {
 	return readReg(ST7789H2::LCD_ID);
 }
@@ -304,6 +398,8 @@ uint16_t LCDDisplay::readReg(uint8_t reg) {
 
 void LCDDisplay::clear(Color color) {
 	for(uint16_t i = 0; i < ST7789H2::LCD_HEIGHT; ++i) {
-		drawHLine(color, 0, i, ST7789H2::LCD_WIDTH);
+		drawHLine(0, i, ST7789H2::LCD_WIDTH, color);
 	}
 }
+
+
