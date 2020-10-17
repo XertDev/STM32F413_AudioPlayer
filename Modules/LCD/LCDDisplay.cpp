@@ -1,11 +1,3 @@
-/*
- * LCDDisplay.cpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- *
- */
-
 //Based on BSP driver
 
 #include <LCD/LCDDisplay.hpp>

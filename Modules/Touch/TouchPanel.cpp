@@ -1,10 +1,3 @@
-/*
- * TouchPanel.cpp
- *
- *  Created on: Oct 15, 2020
- *      Author: xert
- */
-
 #include <Touch/TouchPanel.hpp>
 #include "stm32f4xx_hal_fmpi2c.h"
 
@@ -27,9 +20,6 @@ void TouchPanel::writeReg(FT6206::REG reg, uint8_t *buff, uint16_t count) {
 	if(status != HAL_OK) {
 		resetFMPI2C();
 	}
-
-	auto test = readReg(FT6206::REG::GMODE);
-
 }
 
 uint16_t TouchPanel::id() {

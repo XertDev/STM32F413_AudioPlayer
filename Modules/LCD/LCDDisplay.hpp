@@ -1,10 +1,3 @@
-/*
- * LCDDisplay.hpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef LCD_LCDDISPLAY_HPP_
 #define LCD_LCDDISPLAY_HPP_
 

@@ -1,10 +1,3 @@
-/*
- * Storage.h
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef STORAGE_STORAGE_HPP_
 #define STORAGE_STORAGE_HPP_
 

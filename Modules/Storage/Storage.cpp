@@ -1,10 +1,3 @@
-/*
- * Storage.cpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #include "Storage/Storage.hpp"
 #include "stm32f4xx_hal.h"
 

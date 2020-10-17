@@ -1,10 +1,3 @@
-/*
- * PinPort.hpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef PINPORT_HPP_
 #define PINPORT_HPP_
 

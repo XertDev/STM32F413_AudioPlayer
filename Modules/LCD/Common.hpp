@@ -1,10 +1,3 @@
-/*
- * Common.hpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef LCD_Common_HPP_
 #define LCD_Common_HPP_
 

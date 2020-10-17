@@ -1,10 +1,3 @@
-/*
- * TouchPanel.hpp
- *
- *  Created on: Oct 15, 2020
- *      Author: xert
- */
-
 #ifndef TOUCH_TOUCHPANEL_HPP_
 #define TOUCH_TOUCHPANEL_HPP_
 

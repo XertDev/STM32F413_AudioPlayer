@@ -1,10 +1,3 @@
-/*
- * LCDIOSettings.hpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef LCD_LCDIOSETTINGS_HPP_
 #define LCD_LCDIOSETTINGS_HPP_
 

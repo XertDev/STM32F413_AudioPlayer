@@ -1,10 +1,6 @@
-#include "Storage/Storage.hpp"
-#include "LCD/LCDDisplay.hpp"
-#include "LCD/LCDIOSettings.hpp"
-#include "LCD/LCDConstants.hpp"
-#include "Touch/TouchPanel.hpp"
 #include "../stm32f4xx_hal.h"
-#include "fatfs.h"
+#include "IdleClock/IdleClock.hpp"
+#include "PeripheralsPack.hpp"
 
 extern TIM_HandleTypeDef htim9;
 extern SD_HandleTypeDef hsd;
@@ -46,16 +42,18 @@ LCDIOSettings setting {
 extern "C" void main_cpp();
 void main_cpp()
 {
-	LCDDisplay display(setting);
+	PeripheralsPack pack{
+		LCDDisplay(setting),
+		TouchPanel(&hfmpi2c1, 0x70, &resetFMPI2C),
+		Storage()
 
+	};
 
-	auto d_error = display.init();
-	TouchPanel t_panel(&hfmpi2c1, 0x70, &resetFMPI2C);
-	auto test = t_panel.id();
-	t_panel.setPollingMode();
+	pack.lcd_display.init();
+	pack.touch_panel.setPollingMode();
 
-	display.setOrientation(ST7789H2::ORIENTATION::LANDSCAPE_ROT180);
-	  HAL_Delay(50);
+	pack.lcd_display.setOrientation(ST7789H2::ORIENTATION::LANDSCAPE_ROT180);
+//	idleClock(NULL, &pack);
 
 
   bool last_state = false;
@@ -66,35 +64,35 @@ void main_cpp()
 	  {
 		  if(!last_state)
 		  {
-			  display.displayOn();
+			  pack.lcd_display.displayOn();
 			  int i = 0;
 			  while(i <= 100) {
-				  display.setBacklight(i);
+				  pack.lcd_display.setBacklight(i);
 				  HAL_Delay(5);
 				  ++i;
 			  }
-				display.clear(0xAA);
+			  pack.lcd_display.clear(0xAA);
 
-			  Storage storage;
 
-			  StorageErrors error = storage.init(hsd);
-			  error = storage.entriesInDirectoryCount("0:", test);
+
+			  pack.storage.init(hsd);
+			  pack.storage.entriesInDirectoryCount("0:", test);
 			  for(uint8_t i = 0; i < test; ++i) {
 				  HAL_GPIO_WritePin(LED1_RED_GPIO_Port, LED1_RED_Pin, GPIO_PIN_SET);
 				  HAL_Delay(1000);
 				  HAL_GPIO_WritePin(LED1_RED_GPIO_Port, LED1_RED_Pin, GPIO_PIN_RESET);
 				  HAL_Delay(500);
 			  }
-			  storage.deInit();
-			  display.clear(0x07E0);
+			  pack.storage.deInit();
+			  pack.lcd_display.clear(0x07E0);
 			  HAL_Delay(2000);
-			  display.clear(0xA145);
-			  display.setBackgroundColor(0x07E0);
-			  display.drawString(77, 40, "Stara");
-			  display.drawRect(70, 30, 96, 44, 0x07E0);
-			  display.setBackgroundColor(0xA145);
-			  display.drawString(69, 100, "GRONIA");
-			  display.drawRect(60, 90, 120, 44, 0x07E0);
+			  pack.lcd_display.clear(0xA145);
+			  pack.lcd_display.setBackgroundColor(0x07E0);
+			  pack.lcd_display.drawString(77, 40, "teraz");
+			  pack.lcd_display.drawRect(70, 30, 96, 44, 0x07E0);
+			  pack.lcd_display.setBackgroundColor(0xA145);
+			  pack.lcd_display.drawString(69, 100, "DZIALA");
+			  pack.lcd_display.drawRect(60, 90, 120, 44, 0x07E0);
 		  }
 
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
@@ -106,11 +104,11 @@ void main_cpp()
 		  {
 			  int i = 100;
 			  while(i >= 0) {
-				  display.setBacklight(i);
+				  pack.lcd_display.setBacklight(i);
 				  HAL_Delay(5);
 				  --i;
 			  }
-			  display.displayOff();
+			  pack.lcd_display.displayOff();
 			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
 		  }

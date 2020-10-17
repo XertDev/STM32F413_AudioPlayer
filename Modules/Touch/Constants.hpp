@@ -1,10 +1,3 @@
-/*
- * Constants.hpp
- *
- *  Created on: 15 paź 2020
- *      Author: xert
- */
-
 #ifndef TOUCH_CONSTANTS_HPP_
 #define TOUCH_CONSTANTS_HPP_
 

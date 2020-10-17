@@ -1,10 +1,3 @@
-/*
- * LCDConstants.hpp
- *
- *  Created on: Oct 14, 2020
- *      Author: xert
- */
-
 #ifndef LCD_LCDCONSTANTS_HPP_
 #define LCD_LCDCONSTANTS_HPP_
 
