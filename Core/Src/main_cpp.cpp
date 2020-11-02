@@ -5,6 +5,8 @@
 extern TIM_HandleTypeDef htim9;
 extern SD_HandleTypeDef hsd;
 extern FMPI2C_HandleTypeDef hfmpi2c1;
+extern bool detected_touch;
+
 
 void resetFMPI2C() {
 	HAL_FMPI2C_DeInit(&hfmpi2c1);
@@ -37,14 +39,17 @@ LCDIOSettings setting {
 	(LCDController*)(0x60000000 | 0x08000000)
 };
 
-
+uint8_t touches = 0;
+uint8_t gesture = 0;
+touch::TouchPoint point;
+touch::TouchDetails details;
 
 extern "C" void main_cpp();
 void main_cpp()
 {
 	PeripheralsPack pack{
 		LCDDisplay(setting),
-		TouchPanel(&hfmpi2c1, 0x70, &resetFMPI2C),
+		touch::TouchPanel(&hfmpi2c1, 0x70, &resetFMPI2C),
 		Storage()
 
 	};
@@ -53,12 +58,22 @@ void main_cpp()
 	pack.touch_panel.setPollingMode();
 
 	pack.lcd_display.setOrientation(ST7789H2::ORIENTATION::LANDSCAPE_ROT180);
-//	idleClock(NULL, &pack);
+	//idleClock(NULL, &pack);
+	pack.touch_panel.id();
+	pack.touch_panel.setThreshhold(20);
 
 
   bool last_state = false;
   while (1)
   {
+	  while(detected_touch){
+		  touches = pack.touch_panel.detectTouch();
+		  if(touches > 0) {
+			  point = pack.touch_panel.getPoint(0);
+			  details = pack.touch_panel.getDetails(0);
+			  gesture = pack.touch_panel.getGesture();
+		  }
+	  }
 	  uint8_t test = 0;
 	  if(BSP_SD_IsDetected())
 	  {
@@ -114,6 +129,5 @@ void main_cpp()
 		  }
 		  last_state = false;
 	  }
-	  HAL_Delay(1000);
   }
 }
