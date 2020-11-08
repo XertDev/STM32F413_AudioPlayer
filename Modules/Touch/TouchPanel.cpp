@@ -34,8 +34,7 @@ uint8_t touch::TouchPanel::readReg(detail::REG reg) {
 	return value[0];
 }
 
-uint16_t touch::TouchPanel::readRegMultiple(detail::REG reg, uint8_t *buff,
-uint16_t count) {
+uint16_t touch::TouchPanel::readRegMultiple(detail::REG reg, uint8_t *buff, uint16_t count) {
 	auto status = HAL_OK;
 	status = HAL_FMPI2C_Mem_Read(fmpi2c_handler_, address_, (uint16_t)reg, I2C_MEMADD_SIZE_8BIT, buff, count, 1000);
 
@@ -130,7 +129,7 @@ touch::TouchDetails touch::TouchPanel::getDetails(uint8_t index) {
 }
 
 uint8_t touch::TouchPanel::getGesture() {
-	return readReg(detail::REG::GESTURE_EN);
+	return readReg(detail::REG::GEST_ID);
 }
 
 void touch::TouchPanel::resetFMPI2C() {

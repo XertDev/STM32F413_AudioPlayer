@@ -16,19 +16,22 @@ namespace touch {
 
 	namespace detail {
 		enum class REG: uint16_t {
-			MODE 		  	= 0x00,
-			ID 				= 0xA8,
-			GMODE 			= 0xA4,
-			TD_STAT_REG 	= 0x02,
-			THRESHHOLD 		= 0x80,
-			P1_XH  			= 0x03,
-			P2_XH			= 0x09,
-			P1_WEIGHT		= 0x07,
-			P2_WEIGHT		= 0x0d,
-			GEST_ID			= 0x01,
-			GESTURE_EN      = 0xD0,
-			GESTURE			= 0xD3,
-			PSENSOR_ENABLE  = 0xB0,
+			MODE 		  		= 0x00,
+			ID 					= 0xA8,
+			GMODE 				= 0xA4,
+			TD_STAT_REG 		= 0x02,
+			THRESHHOLD 			= 0x80,
+			P1_XH  				= 0x03,
+			P2_XH				= 0x09,
+			P1_WEIGHT			= 0x07,
+			P2_WEIGHT			= 0x0d,
+			GEST_ID				= 0x01,
+			RADIAN_VALUE		= 0x91,
+			OFFSET_LEFT_RIGHT	= 0x92,
+			OFFSET_UP_DOWN		= 0x93,
+			DISTANCE_LEFT_RIGHT = 0x94,
+			DISTANCE_UP_DOWN	= 0x95,
+			DISTANCE_ZOOM		= 0x96,
 		};
 
 		namespace FLAG {

@@ -2,23 +2,39 @@
 #define AUDIOCODEC_AUDIOCODEC_HPP_
 
 #include "stm32f4xx_hal.h"
+#include "Constants.hpp"
 
-enum class AudioError {
-	OK=0
-};
+namespace audio {
+	class AudioCodec {
+	public:
+		AudioCodec(FMPI2C_HandleTypeDef hfmpi2c1, I2S_HandleTypeDef hi2s2);
+		~AudioCodec();
 
-class AudioCodec {
-public:
-	AudioCodec(FMPI2C_HandleTypeDef hfmpi2c1, I2S_HandleTypeDef hi2s2);
-	~AudioCodec();
+		uint32_t id();
 
-	uint32_t id();
+		void init(OUTPUT_DEVICE output, FREQUENCY freq);
 
-	void init();
+		void setVolume(uint8_t volume);
+		void mute();
+		void unmute();
 
-private:
-	FMPI2C_HandleTypeDef hfmpi2c1;
-	I2S_HandleTypeDef hi2s2;
-};
+	private:
+		FMPI2C_HandleTypeDef* hfmpi2c1;
+		I2S_HandleTypeDef hi2s2;
+		uint8_t address_;
+
+		void(*reset_func_)();
+
+		void writeReg(detail::REG reg, uint16_t value);
+		uint16_t readReg(detail::REG reg);
+
+		void setOutputDevice(OUTPUT_DEVICE device);
+		void setFrequency(FREQUENCY freq);
+
+		void initOutput();
+
+		void resetFMPI2C();
+	};
+}
 
 #endif /* AUDIOCODEC_AUDIOCODEC_HPP_ */
