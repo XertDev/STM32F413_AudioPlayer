@@ -1,10 +1,13 @@
 #include "../stm32f4xx_hal.h"
 #include "IdleClock/IdleClock.hpp"
 #include "PeripheralsPack.hpp"
+#include <cmath>
 
 extern TIM_HandleTypeDef htim9;
 extern SD_HandleTypeDef hsd;
 extern FMPI2C_HandleTypeDef hfmpi2c1;
+extern I2S_HandleTypeDef hi2s2;
+
 extern bool detected_touch;
 
 
@@ -50,8 +53,8 @@ void main_cpp()
 	PeripheralsPack pack{
 		LCDDisplay(setting),
 		touch::TouchPanel(&hfmpi2c1, 0x70, &resetFMPI2C),
-		Storage()
-
+		Storage(),
+		audio::AudioCodec(&hfmpi2c1, &hi2s2, 0x34, &resetFMPI2C)
 	};
 
 	pack.lcd_display.init();
@@ -61,6 +64,23 @@ void main_cpp()
 	//idleClock(NULL, &pack);
 	pack.touch_panel.id();
 	pack.touch_panel.setThreshhold(20);
+
+	auto test  =pack.codec.id();
+
+	pack.codec.init(audio::OUTPUT_DEVICE::BOTH, audio::FREQUENCY::FREQ_44K);
+	pack.codec.setVolume(80);
+
+	#define BUFFER_SIZE		2200
+
+	static int16_t audio_data[2 * BUFFER_SIZE];
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+        int16_t value = (int16_t)(32000.0 * sin(2.0 * 3.14 * i / 22.0));
+        audio_data[i * 2] = value;
+        audio_data[i * 2 + 1] = value;
+    }
+    while(1){
+        HAL_I2S_Transmit(&hi2s2, (uint16_t*)audio_data, 2 * BUFFER_SIZE, HAL_MAX_DELAY);
+    }
 
 
   bool last_state = false;

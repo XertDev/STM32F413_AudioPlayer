@@ -7,7 +7,7 @@
 namespace audio {
 	class AudioCodec {
 	public:
-		AudioCodec(FMPI2C_HandleTypeDef hfmpi2c1, I2S_HandleTypeDef hi2s2);
+		AudioCodec(FMPI2C_HandleTypeDef* hfmpi2c1, I2S_HandleTypeDef* hi2s2, uint8_t address, void(*reset_func)());
 		~AudioCodec();
 
 		uint32_t id();
@@ -19,8 +19,8 @@ namespace audio {
 		void unmute();
 
 	private:
-		FMPI2C_HandleTypeDef* hfmpi2c1;
-		I2S_HandleTypeDef hi2s2;
+		FMPI2C_HandleTypeDef* hfmpi2c1_;
+		I2S_HandleTypeDef* hi2s2_;
 		uint8_t address_;
 
 		void(*reset_func_)();

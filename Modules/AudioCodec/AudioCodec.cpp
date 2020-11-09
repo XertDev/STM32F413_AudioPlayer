@@ -2,7 +2,8 @@
 #include "stm32f4xx_hal_fmpi2c.h"
 
 
-audio::AudioCodec::AudioCodec(FMPI2C_HandleTypeDef hfmpi2c1, I2S_HandleTypeDef hi2s2) {
+audio::AudioCodec::AudioCodec(FMPI2C_HandleTypeDef* hfmpi2c1, I2S_HandleTypeDef* hi2s2, uint8_t address, void(*reset_func)())
+:hfmpi2c1_(hfmpi2c1), hi2s2_(hi2s2), address_(address), reset_func_(reset_func) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -16,7 +17,7 @@ void audio::AudioCodec::init(OUTPUT_DEVICE output, FREQUENCY freq) {
 
 	uint16_t buff[16] = {};
 	//generate some clock on codec to initialize registers
-	HAL_I2S_Transmit_DMA(&hi2s2, buff, sizeof(buff));
+	HAL_I2S_Transmit_DMA(hi2s2_, buff, sizeof(buff));
 
 	//workaround from errata
 	writeReg(REG::WORKAROUND_1, 0x0003);
@@ -26,10 +27,16 @@ void audio::AudioCodec::init(OUTPUT_DEVICE output, FREQUENCY freq) {
 	//enable VMID soft start Start-up bias current enabled
 	writeReg(REG::ANTI_POP, 0x006C);
 
+	//enable bias generator
+	writeReg(REG::POWER_MANAGEMENT_1, 0x0003);
+
 	HAL_Delay(50);
 
 	setOutputDevice(output);
 	setFrequency(freq);
+
+	//AIF1 word length = 16 bits, format I2S
+	writeReg(REG::AIF1_CONTROL_1, 0x4010);
 
 	//slave mode
 	writeReg(REG::AIF1_MASTER_SLAVE, 0x0000);
@@ -40,7 +47,7 @@ void audio::AudioCodec::init(OUTPUT_DEVICE output, FREQUENCY freq) {
 
 	initOutput();
 
-	HAL_I2S_DMAStop(&hi2s2);
+	HAL_I2S_DMAStop(hi2s2_);
 }
 
 void audio::AudioCodec::initOutput() {
@@ -107,7 +114,7 @@ void audio::AudioCodec::initOutput() {
 }
 
 uint32_t audio::AudioCodec::id() {
-
+	return readReg(detail::REG::ID);
 }
 
 void audio::AudioCodec::writeReg(detail::REG reg, uint16_t value) {
@@ -115,7 +122,7 @@ void audio::AudioCodec::writeReg(detail::REG reg, uint16_t value) {
 	auto status = HAL_OK;
 
 	status = HAL_FMPI2C_Mem_Write(
-			hfmpi2c1, address_,
+			hfmpi2c1_, address_,
 			(uint16_t)reg,
 			FMPI2C_MEMADD_SIZE_16BIT,
 			(uint8_t*)&tmp,
@@ -132,7 +139,7 @@ uint16_t audio::AudioCodec::readReg(detail::REG reg) {
 	uint16_t read_value = 0;
 	auto status = HAL_OK;
 
-	status = HAL_FMPI2C_Mem_Read(hfmpi2c1, address_, (uint16_t) reg, FMPI2C_MEMADD_SIZE_16BIT, (uint8_t*)&read_value, 2, 1000);
+	status = HAL_FMPI2C_Mem_Read(hfmpi2c1_, address_, (uint16_t) reg, FMPI2C_MEMADD_SIZE_16BIT, (uint8_t*)&read_value, 2, 1000);
 
 	if(status != HAL_OK) {
 		resetFMPI2C();
@@ -217,7 +224,7 @@ void audio::AudioCodec::setFrequency(FREQUENCY freq) {
 		writeReg(REG::AIF1_RATE, 0x0043);
 		break;
 	case FREQUENCY::FREQ_44K:
-		writeReg(REG::AIF1_RATE, 0x0083);
+		writeReg(REG::AIF1_RATE, 0x0073);
 		break;
 	}
 }

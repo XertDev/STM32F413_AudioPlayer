@@ -23,6 +23,7 @@ namespace audio {
 
 	namespace detail {
 		enum class REG: uint16_t {
+			ID							= 0x00,
 			WORKAROUND_1				= 0x102,
 			WORKAROUND_2				= 0x817,
 			ANTI_POP 					= 0x39,
@@ -56,6 +57,7 @@ namespace audio {
 			RIGHT_OUTPUT_VOLUME			= 0x1D,
 			SPEAKER_VOLUME_LEFT			= 0x26,
 			SPEAKER_VOLUME_RIGHT		= 0x27,
+			AIF1_CONTROL_1				= 0x300,
 		};
 	}
 }
