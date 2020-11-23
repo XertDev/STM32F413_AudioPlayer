@@ -21,6 +21,28 @@ public:
 	void deInit();
 
 	StorageErrors entriesInDirectoryCount(const char* dir_name, uint8_t& count);
+	bool openFile(const char *name, FIL& file);
+
+	struct DirectoryScanner
+	{
+		~DirectoryScanner();
+
+		void next();
+		bool valid();
+
+		const FILINFO& fileInfo();
+
+	private:
+		DIR dir_;
+		FRESULT res_;
+		FILINFO file_info_;
+
+		DirectoryScanner(const char* dir_name);
+		friend class Storage;
+
+	};
+	DirectoryScanner entriesInDirectoryScanner(const char* dir_name);
+
 
 private:
 

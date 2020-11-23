@@ -3,8 +3,8 @@
 
 constexpr auto I2C_MEMADD_SIZE_8BIT = 0x00000001U;
 
-touch::TouchPanel::TouchPanel(FMPI2C_HandleTypeDef *fmpi2c_handler, uint8_t address, void(*reset_func)())
-:fmpi2c_handler_(fmpi2c_handler), address_(address), reset_func_(reset_func)
+touch::TouchPanel::TouchPanel(FMPI2C_HandleTypeDef *fmpi2c_handler, uint8_t address, uint8_t h, uint8_t w, void(*reset_func)())
+:fmpi2c_handler_(fmpi2c_handler), address_(address),h_(h), w_(w), reset_func_(reset_func)
 {
 }
 
@@ -94,8 +94,8 @@ touch::TouchPoint touch::TouchPanel::getPoint(uint8_t index) {
 	}
 
 	TouchPoint point;
-	point.x = ((raw_position[0] & MSB_MASK) << 8) | (raw_position[1] & LSB_MASK);
-	point.y = ((raw_position[2] & MSB_MASK) << 8) | (raw_position[3] & LSB_MASK);
+	point.x = (((raw_position[0] & MSB_MASK) << 8) | (raw_position[1] & LSB_MASK));
+	point.y = (((raw_position[2] & MSB_MASK) << 8) | (raw_position[3] & LSB_MASK));
 
 	return point;
 }

@@ -19,6 +19,9 @@ public:
 
 
 	void setBacklight(uint8_t level);
+	uint8_t backlight();
+
+
 	void displayOn();
 	void displayOff();
 
@@ -48,7 +51,7 @@ public:
 private:
 	LCDIOSettings io_settings_;
 
-	uint8_t level_;
+	uint8_t level_{0};
 
 	LCDDRawProperties properties_;
 

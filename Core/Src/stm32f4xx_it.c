@@ -44,7 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-bool user_resumed = false;
+bool timeout_lptim = false;
 bool detected_touch = false;
 /* USER CODE END PV */
 
@@ -260,12 +260,12 @@ void SPI2_IRQHandler(void)
   */
 void LPTIM1_IRQHandler(void)
 {
-  /* USER CODE BEGIN LPTIM1_IRQn 0 */
-  /* USER CODE END LPTIM1_IRQn 0 */
-  HAL_LPTIM_IRQHandler(&hlptim1);
-  /* USER CODE BEGIN LPTIM1_IRQn 1 */
-
-  /* USER CODE END LPTIM1_IRQn 1 */
+	  /* USER CODE BEGIN LPTIM1_IRQn 0 */
+	  timeout_lptim = true;
+	  /* USER CODE END LPTIM1_IRQn 0 */
+	  HAL_LPTIM_IRQHandler(&hlptim1);
+	  /* USER CODE BEGIN LPTIM1_IRQn 1 */
+	  /* USER CODE END LPTIM1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

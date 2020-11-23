@@ -374,6 +374,10 @@ void LCDDisplay::setTextColor(Color color) {
 	properties_.text_color = color;
 }
 
+uint8_t LCDDisplay::backlight() {
+	return level_;
+}
+
 uint16_t LCDDisplay::id() {
 	return readReg(ST7789H2::LCD_ID);
 }

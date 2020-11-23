@@ -6,24 +6,24 @@
 extern LPTIM_HandleTypeDef hlptim1;
 extern RTC_HandleTypeDef hrtc;
 
-extern uint8_t user_resumed;
+extern uint8_t timeout_lptim;
 
 static void updateClock(LCDDisplay* display);
 
-uint8_t idleClock(uint8_t* modes_stack, PeripheralsPack* pack) {
-	pack->lcd_display.clear(0xAEDB);
-	pack->lcd_display.setBackgroundColor(0xAEDB);
-	pack->lcd_display.setTextColor(0x19AA);
-	for(uint8_t i = 0; i <= 1; ++i) {
-		pack->lcd_display.setBacklight(i);
+constexpr uint8_t preferred_backlight = 10;
+
+void idleClock(uint8_t* modes_stack, PeripheralsPack& pack) {
+	pack.lcd_display.clear(0xAEDB);
+	pack.lcd_display.setBackgroundColor(0xAEDB);
+	pack.lcd_display.setTextColor(0x19AA);
+	for(uint8_t i = pack.lcd_display.backlight(); i <= preferred_backlight; ++i) {
+		pack.lcd_display.setBacklight(i);
 		HAL_Delay(5);
 	}
 
-    user_resumed = false;
-
-	while(!user_resumed) {
+	while(!timeout_lptim) {
 		//HAL_LPTIM_Counter_Start_IT(&hlptim1, 15360);
-		updateClock(&(pack->lcd_display));
+		updateClock(&(pack.lcd_display));
 
 		if(HAL_LPTIM_Counter_Start_IT(&hlptim1, 15360) != HAL_OK) {
 			Error_Handler();
@@ -34,9 +34,7 @@ uint8_t idleClock(uint8_t* modes_stack, PeripheralsPack* pack) {
 		HAL_ResumeTick();
 	}
 
-    user_resumed = false;
-
-	return 0;
+	timeout_lptim = false;
 }
 
 void updateClock(LCDDisplay* display) {

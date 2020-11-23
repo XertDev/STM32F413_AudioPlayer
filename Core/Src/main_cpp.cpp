@@ -1,6 +1,9 @@
 #include "../stm32f4xx_hal.h"
 #include "IdleClock/IdleClock.hpp"
 #include "PeripheralsPack.hpp"
+#include "MainMenu/MainMenu.hpp"
+#include "Settings/Settings.hpp"
+#include "SongList/SongList.hpp"
 #include <cmath>
 
 extern TIM_HandleTypeDef htim9;
@@ -52,7 +55,7 @@ void main_cpp()
 {
 	PeripheralsPack pack{
 		LCDDisplay(setting),
-		touch::TouchPanel(&hfmpi2c1, 0x70, &resetFMPI2C),
+		touch::TouchPanel(&hfmpi2c1, 0x70, 240, 240, &resetFMPI2C),
 		Storage(),
 		audio::AudioCodec(&hfmpi2c1, &hi2s2, 0x34, &resetFMPI2C)
 	};
@@ -67,10 +70,51 @@ void main_cpp()
 
 	auto test  =pack.codec.id();
 
-	pack.codec.init(audio::OUTPUT_DEVICE::BOTH, audio::FREQUENCY::FREQ_44K);
-	pack.codec.setVolume(80);
+	pack.codec.init(audio::OUTPUT_DEVICE::HEADPHONE, audio::FREQUENCY::FREQ_44K);
+	pack.codec.setVolume(10);
 
 	#define BUFFER_SIZE		2200
+	pack.storage.init(hsd);
+//	FIL file;
+//	pack.storage.openFile("0:/test.wav", file);
+//	int16_t sound[128];
+//	int8_t header[44];
+//	unsigned int br;
+//	f_read(&file, header, 44, &br);
+//	pack.codec.setVolume(100);
+//
+//	while(true)
+//	{
+//		f_read(&file, sound, sizeof(sound)*sizeof(sound[0]), &br);
+////        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)*sizeof(sound[0]), HAL_MAX_DELAY);
+//	}
+//
+
+	uint8_t modes_stack[16] = {1, 0};
+	void (*modes[])(uint8_t* modes_stack, PeripheralsPack& pack) =
+	{
+			mainMenu,
+			idleClock,
+			settings,
+			songList
+	};
+
+
+	while(true)
+	{
+		uint8_t next;
+		uint8_t* tmp = modes_stack;
+		while(*tmp != 0)
+		{
+			next = *tmp;
+			++tmp;
+		}
+		modes[next-1](modes_stack, pack);
+	}
+
+	//main_menu(modes_stack, pack);
+	//song_list(modes_stack, pack);
+
 
 	static int16_t audio_data[2 * BUFFER_SIZE];
     for (int i = 0; i < BUFFER_SIZE; i++) {
@@ -78,8 +122,13 @@ void main_cpp()
         audio_data[i * 2] = value;
         audio_data[i * 2 + 1] = value;
     }
-    while(1){
+
+    for(int i = 0; i < 100; ++i)
+    {
+    	pack.codec.setVolume(i);
+    	HAL_Delay(100);
         HAL_I2S_Transmit(&hi2s2, (uint16_t*)audio_data, 2 * BUFFER_SIZE, HAL_MAX_DELAY);
+
     }
 
 

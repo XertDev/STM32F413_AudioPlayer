@@ -69,3 +69,36 @@ StorageErrors Storage::entriesInDirectoryCount(const char* dir_name, uint8_t& co
 
 	return OK;
 }
+
+const FILINFO& Storage::DirectoryScanner::fileInfo() {
+	return file_info_;
+}
+
+Storage::DirectoryScanner::DirectoryScanner(const char *dir_name) {
+	res_ = f_opendir(&dir_, dir_name);
+	if(res_ == FR_OK) {
+		res_ = f_readdir(&dir_, &file_info_);
+	}
+}
+
+Storage::DirectoryScanner::~DirectoryScanner() {
+	f_closedir(&dir_);
+
+}
+
+void Storage::DirectoryScanner::next() {
+	res_ = f_readdir(&dir_, &file_info_);
+}
+
+bool Storage::DirectoryScanner::valid() {
+	return res_ == FR_OK && file_info_.fname[0] != 0;
+}
+
+bool Storage::openFile(const char *name, FIL& file) {
+	auto error  = f_open(&file,  name,  FA_READ);
+	return error == FR_OK;
+}
+
+Storage::DirectoryScanner Storage::entriesInDirectoryScanner(const char *dir_name) {
+	return DirectoryScanner(dir_name);
+}

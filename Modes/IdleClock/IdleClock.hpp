@@ -4,7 +4,7 @@
 #include "PeripheralsPack.hpp"
 
 
-uint8_t idleClock(uint8_t* modes_stack, PeripheralsPack* pack);
+void idleClock(uint8_t* modes_stack, PeripheralsPack& pack);
 
 
 #endif /* IDLECLOCK_IDLECLOCK_HPP_ */

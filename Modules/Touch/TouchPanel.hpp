@@ -28,7 +28,7 @@ namespace touch {
 
 	class TouchPanel {
 	public:
-		TouchPanel(FMPI2C_HandleTypeDef *fmpi2c_handler, uint8_t address, void(*reset_func)());
+		TouchPanel(FMPI2C_HandleTypeDef *fmpi2c_handler, uint8_t address, uint8_t h, uint8_t w, void(*reset_func)());
 		~TouchPanel();
 
 		uint16_t id();
@@ -47,6 +47,8 @@ namespace touch {
 
 		FMPI2C_HandleTypeDef *fmpi2c_handler_;
 		uint8_t address_;
+		uint8_t h_;
+		uint8_t w_;
 
 		void(*reset_func_)();
 

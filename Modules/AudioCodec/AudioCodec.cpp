@@ -19,6 +19,9 @@ void audio::AudioCodec::init(OUTPUT_DEVICE output, FREQUENCY freq) {
 	//generate some clock on codec to initialize registers
 	HAL_I2S_Transmit_DMA(hi2s2_, buff, sizeof(buff));
 
+	//reset
+	writeReg(REG::ID, 0x8994);
+
 	//workaround from errata
 	writeReg(REG::WORKAROUND_1, 0x0003);
 	writeReg(REG::WORKAROUND_2, 0x0000);
