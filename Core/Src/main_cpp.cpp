@@ -75,20 +75,19 @@ void main_cpp()
 
 	#define BUFFER_SIZE		2200
 	pack.storage.init(hsd);
-//	FIL file;
-//	pack.storage.openFile("0:/test.wav", file);
-//	int16_t sound[128];
-//	int8_t header[44];
-//	unsigned int br;
-//	f_read(&file, header, 44, &br);
-//	pack.codec.setVolume(100);
-//
-//	while(true)
-//	{
-//		f_read(&file, sound, sizeof(sound)*sizeof(sound[0]), &br);
-////        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)*sizeof(sound[0]), HAL_MAX_DELAY);
-//	}
-//
+	FIL file;
+	pack.storage.openFile("0:/test2.wav", file);
+	uint8_t sound[8172];
+	int8_t header[44];
+	unsigned int br;
+	f_read(&file, header, 44, &br);
+	pack.codec.setVolume(50);
+	while(true)
+	{
+		f_read(&file, sound, sizeof(sound), &br);
+        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)/2, HAL_MAX_DELAY);
+	}
+
 
 	uint8_t modes_stack[16] = {1, 0};
 	void (*modes[])(uint8_t* modes_stack, PeripheralsPack& pack) =
