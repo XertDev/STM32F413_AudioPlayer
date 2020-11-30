@@ -1,7 +1,12 @@
 #include "SongList.hpp"
 #include <memory.h>
+#include "Utils.hpp"
 
 extern bool detected_touch;
+extern bool timeout_lptim;
+
+extern LPTIM_HandleTypeDef hlptim1;
+
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -45,34 +50,66 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 			}
 			scanner.next();
 		}
-		while(true){
+
+		bool jump = false;
+
+		while(true)
+		{
 			if(update_list)
 			{
 				update_file_list(entries, pack.lcd_display);
 				update_list = false;
 			}
+
+			if(HAL_LPTIM_Counter_Start_IT(&hlptim1, 15360) != HAL_OK) {
+				Error_Handler();
+			}
 			HAL_SuspendTick();
 			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 			HAL_ResumeTick();
-			auto action_point = touch::TouchPoint{0, 0};
+
 			while(detected_touch)
 			{
+				HAL_LPTIM_Counter_Stop_IT(&hlptim1);
 				if(pack.touch_panel.detectTouch() == 1)
 				{
-					for(int i = 0; i < 3; ++i)
+					auto touch_details = pack.touch_panel.getDetails(0);
+					if(touch_details.event_type == 1)
 					{
-						if(scanner.valid())
+						auto touch_info = pack.touch_panel.getPoint(0);
+						if(inRange(touch_info.x, 0, 65) && inRange(touch_info.y, 200, 240))
 						{
-							auto& file_info = scanner.fileInfo();
-							memset(&(entries[i*18]), 0, 18);
-							strncpy(&(entries[i*18]), file_info.fname, 17);
-							update_list = true;
+							uint8_t* last = modes_stack;
+							while(*last != 0)
+							{
+								++last;
+							}
+							--last;
+							*last = 0;
+							jump = true;
 						}
-						scanner.next();
 					}
 				}
 			}
+
+			if(timeout_lptim && !jump)
+			{
+				uint8_t* last = modes_stack;
+				while(*last != 0)
+				{
+					++last;
+				}
+				*last = 2;
+				timeout_lptim = 0;
+				jump = true;
+			}
+
+			if(jump)
+			{
+				break;
+			}
 		};
+
 }
 
 static void draw_background(LCDDisplay& display)
@@ -80,9 +117,9 @@ static void draw_background(LCDDisplay& display)
 	display.clear(background);
 
 	//back button
-	display.fillRect(0, 0, 50, 30, back_button_color);
+	display.fillRect(0, 0, 50, 40, back_button_color);
 	//top bar
-	display.fillRect(50, 0, 190, 30, bar_color);
+	display.fillRect(50, 0, 190, 40, bar_color);
 
 	//left button
 	display.fillRect(0, 200, 118, 40, navigation_color);
@@ -95,9 +132,13 @@ static void draw_background(LCDDisplay& display)
 
 static void update_file_list(char* entries, LCDDisplay& display)
 {
-	display.fillRect(0, 30, 240, 170, background);
+	display.fillRect(0, 40, 240, 160, background);
 	for(int i = 0; i < 3; ++i)
 	{
-		display.drawString(10, 40 + 50*i, &(entries[i*18]));
+		display.drawString(10, 65 + 50*i, &(entries[i*18]));
+	}
+	for(int i = 0; i < 2; ++i)
+	{
+		display.fillRect(0, 96 + 50*i, 240, 3, bar_color);
 	}
 }

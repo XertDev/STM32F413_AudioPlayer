@@ -49,6 +49,7 @@ void mainMenu(uint8_t* modes_stack, PeripheralsPack& pack)
 
 		while(detected_touch)
 		{
+			HAL_LPTIM_Counter_Stop_IT(&hlptim1);
 			if(touch_panel.detectTouch() == 1)
 			{
 				auto touch_details = touch_panel.getDetails(0);
@@ -73,7 +74,7 @@ void mainMenu(uint8_t* modes_stack, PeripheralsPack& pack)
 			}
 		}
 
-		if(timeout_lptim)
+		if(timeout_lptim && !jump)
 		{
 			uint8_t* last = modes_stack;
 			while(*last != 0)
@@ -84,6 +85,7 @@ void mainMenu(uint8_t* modes_stack, PeripheralsPack& pack)
 			timeout_lptim = 0;
 			jump = true;
 		}
+		timeout_lptim = false;
 
 		if(jump)
 		{

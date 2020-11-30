@@ -80,13 +80,13 @@ void main_cpp()
 	uint8_t sound[8172];
 	int8_t header[44];
 	unsigned int br;
-	f_read(&file, header, 44, &br);
-	pack.codec.setVolume(50);
-	while(true)
-	{
-		f_read(&file, sound, sizeof(sound), &br);
-        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)/2, HAL_MAX_DELAY);
-	}
+//	f_read(&file, header, 44, &br);
+//	pack.codec.setVolume(50);
+//	while(true)
+//	{
+//		f_read(&file, sound, sizeof(sound), &br);
+//        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)/2, HAL_MAX_DELAY);
+//	}
 
 
 	uint8_t modes_stack[16] = {1, 0};

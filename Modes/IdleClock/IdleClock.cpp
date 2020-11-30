@@ -33,8 +33,16 @@ void idleClock(uint8_t* modes_stack, PeripheralsPack& pack) {
 		HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 		HAL_ResumeTick();
 	}
+	HAL_LPTIM_Counter_Stop_IT(&hlptim1);
 
 	timeout_lptim = false;
+	uint8_t* last = modes_stack;
+	while(*last != 0)
+	{
+		++last;
+	}
+	--last;
+	*last = 0;
 }
 
 void updateClock(LCDDisplay* display) {
