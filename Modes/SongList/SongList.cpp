@@ -87,6 +87,50 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							--last;
 							*last = 0;
 							jump = true;
+						} else if(inRange(touch_info.x, 40, 80) && inRange(touch_info.y, 0, 240))
+						{
+							// todo: player logic
+							uint8_t* last = modes_stack;
+							while(*last != 0)
+							{
+								++last;
+							}
+							--last;
+							*last = 7;
+							jump = true;
+						} else if(inRange(touch_info.x, 80, 120) && inRange(touch_info.y, 0, 240))
+						{
+							// todo: player logic
+							uint8_t* last = modes_stack;
+							while(*last != 0)
+							{
+								++last;
+							}
+							--last;
+							*last = 7;
+							jump = true;
+						} else if(inRange(touch_info.x, 120, 160) && inRange(touch_info.y, 0, 240))
+						{
+							// todo: player logic
+							uint8_t* last = modes_stack;
+							while(*last != 0)
+							{
+								++last;
+							}
+							--last;
+							*last = 7;
+							jump = true;
+						} else if(inRange(touch_info.x, 160, 200) && inRange(touch_info.y, 0, 240))
+						{
+							// todo: player logic
+							uint8_t* last = modes_stack;
+							while(*last != 0)
+							{
+								++last;
+							}
+							--last;
+							*last = 7;
+							jump = true;
 						}
 					}
 				}

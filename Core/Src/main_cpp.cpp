@@ -4,6 +4,9 @@
 #include "MainMenu/MainMenu.hpp"
 #include "Settings/Settings.hpp"
 #include "SongList/SongList.hpp"
+#include "SetTime/SetTime.hpp"
+#include "SetDate/SetDate.hpp"
+#include "Player/Player.hpp"
 #include <cmath>
 
 extern TIM_HandleTypeDef htim9;
@@ -95,7 +98,10 @@ void main_cpp()
 			mainMenu,
 			idleClock,
 			settings,
-			songList
+			songList,
+			setTime,
+			setDate,
+			player
 	};
 
 

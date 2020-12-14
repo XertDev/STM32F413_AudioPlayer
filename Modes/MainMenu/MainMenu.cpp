@@ -56,9 +56,15 @@ void mainMenu(uint8_t* modes_stack, PeripheralsPack& pack)
 				if(touch_details.event_type == 1)
 				{
 					auto touch_info = touch_panel.getPoint(0);
-					if(inRange(touch_info.x, 30, 110) && inRange(touch_info.y, 80, 160))
+					if(inRange(touch_info.x, 80, 160) && inRange(touch_info.y, 130, 210))
 					{
-
+						uint8_t* last = modes_stack;
+						while(*last != 0)
+						{
+							++last;
+						}
+						*last = 3;
+						jump = true;
 					}
 					else if(inRange(touch_info.x, 80, 160) && inRange(touch_info.y, 30, 110))
 					{
