@@ -87,7 +87,7 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							--last;
 							*last = 0;
 							jump = true;
-						} else if(inRange(touch_info.x, 40, 80) && inRange(touch_info.y, 0, 240))
+						} else if(inRange(touch_info.x, 50, 100) && inRange(touch_info.y, 0, 240))
 						{
 							// todo: player logic
 							uint8_t* last = modes_stack;
@@ -98,7 +98,7 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							--last;
 							*last = 7;
 							jump = true;
-						} else if(inRange(touch_info.x, 80, 120) && inRange(touch_info.y, 0, 240))
+						} else if(inRange(touch_info.x, 100, 150) && inRange(touch_info.y, 0, 240))
 						{
 							// todo: player logic
 							uint8_t* last = modes_stack;
@@ -109,18 +109,7 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							--last;
 							*last = 7;
 							jump = true;
-						} else if(inRange(touch_info.x, 120, 160) && inRange(touch_info.y, 0, 240))
-						{
-							// todo: player logic
-							uint8_t* last = modes_stack;
-							while(*last != 0)
-							{
-								++last;
-							}
-							--last;
-							*last = 7;
-							jump = true;
-						} else if(inRange(touch_info.x, 160, 200) && inRange(touch_info.y, 0, 240))
+						} else if(inRange(touch_info.x, 150, 200) && inRange(touch_info.y, 0, 240))
 						{
 							// todo: player logic
 							uint8_t* last = modes_stack;
@@ -162,8 +151,10 @@ static void draw_background(LCDDisplay& display)
 
 	//back button
 	display.fillRect(0, 0, 50, 40, back_button_color);
+	display.drawString(10, 10, "X");
 	//top bar
 	display.fillRect(50, 0, 190, 40, bar_color);
+	display.drawString(60, 10, "List");
 
 	//left button
 	display.fillRect(0, 200, 118, 40, navigation_color);

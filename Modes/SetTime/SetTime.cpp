@@ -9,6 +9,7 @@ extern LPTIM_HandleTypeDef hlptim1;
 
 RTC_TimeTypeDef time;
 char time_buffer[6];
+extern RTC_DateTypeDef date;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -37,6 +38,7 @@ void setTime(uint8_t* modes_stack, PeripheralsPack& pack) {
 	}
 
 	HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
 	sprintf(time_buffer, "%2d:%02d", time.Hours, time.Minutes);
 	pack.lcd_display.drawString(77, 90, time_buffer);
 
@@ -146,6 +148,7 @@ static void draw_background(LCDDisplay& display)
 	display.drawString(210, 10, "S");
 	//top bar
 	display.fillRect(50, 0, 140, 40, bar_color);
+	display.drawString(60, 10, "Time");
 
 	//left button
 	display.fillRect(0, 150, 118, 40, navigation_color);

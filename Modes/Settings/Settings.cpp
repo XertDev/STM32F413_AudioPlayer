@@ -121,6 +121,7 @@ static void draw_background(LCDDisplay& display)
 	display.drawString(10, 10, "X");
 	//top bar
 	display.fillRect(50, 0, 190, 40, bar_color);
+	display.drawString(60, 10, "Settings");
 
 	//shade behind date button
 	display.fillRect(20, 90,10, 80, shade);

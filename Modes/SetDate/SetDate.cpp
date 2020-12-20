@@ -9,6 +9,7 @@ extern LPTIM_HandleTypeDef hlptim1;
 
 RTC_DateTypeDef date;
 char date_buffer[11];
+extern RTC_TimeTypeDef time;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -37,6 +38,7 @@ void setDate(uint8_t* modes_stack, PeripheralsPack& pack) {
 		HAL_Delay(5);
 	}
 
+	HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
 	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
 	pack.lcd_display.drawString(35, 75, date_buffer);
@@ -132,19 +134,19 @@ void saveDate() {
 void changeDay(int sign, LCDDisplay& display) {
 	date.Date = (uint8_t) (((int) date.Date + sign)%31 + 1);
 	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
-	display.drawString(35, 90, date_buffer);
+	display.drawString(35, 75, date_buffer);
 }
 
 void changeMonth(int sign, LCDDisplay& display) {
-	date.Month = (uint8_t) (((int) date.Month + sign)%11 + 1);
+	date.Month = (uint8_t) (((int) date.Month + sign)%12 + 1);
 	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
-	display.drawString(35, 90, date_buffer);
+	display.drawString(35, 75, date_buffer);
 }
 
 void changeYear(int sign, LCDDisplay& display) {
-	date.Year = (uint8_t) ((int) date.Year + sign);
+	date.Year = date.Year + sign;
 	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
-	display.drawString(35, 90, date_buffer);
+	display.drawString(35, 75, date_buffer);
 }
 
 
@@ -160,6 +162,7 @@ static void draw_background(LCDDisplay& display)
 	display.drawString(210, 10, "S");
 	//top bar
 	display.fillRect(50, 0, 140, 40, bar_color);
+	display.drawString(60, 10, "Date");
 
 	//left button
 	display.fillRect(0, 100, 118, 40, navigation_color);

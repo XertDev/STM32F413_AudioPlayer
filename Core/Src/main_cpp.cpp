@@ -78,11 +78,11 @@ void main_cpp()
 
 	#define BUFFER_SIZE		2200
 	pack.storage.init(hsd);
-	FIL file;
-	pack.storage.openFile("0:/test2.wav", file);
-	uint8_t sound[8172];
-	int8_t header[44];
-	unsigned int br;
+//	FIL file;
+//	pack.storage.openFile("0:/test2.wav", file);
+//	uint8_t sound[8172];
+//	int8_t header[44];
+//	unsigned int br;
 //	f_read(&file, header, 44, &br);
 //	pack.codec.setVolume(50);
 //	while(true)

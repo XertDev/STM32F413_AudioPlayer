@@ -836,7 +836,10 @@ static void MX_FSMC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+// todo later
+//void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {}
+//
+//void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {}
 /* USER CODE END 4 */
 
 /**
