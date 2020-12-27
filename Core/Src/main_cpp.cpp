@@ -121,20 +121,20 @@ void main_cpp()
 	//song_list(modes_stack, pack);
 
 
-	static int16_t audio_data[2 * BUFFER_SIZE];
-    for (int i = 0; i < BUFFER_SIZE; i++) {
-        int16_t value = (int16_t)(32000.0 * sin(2.0 * 3.14 * i / 22.0));
-        audio_data[i * 2] = value;
-        audio_data[i * 2 + 1] = value;
-    }
-
-    for(int i = 0; i < 100; ++i)
-    {
-    	pack.codec.setVolume(i);
-    	HAL_Delay(100);
-        HAL_I2S_Transmit(&hi2s2, (uint16_t*)audio_data, 2 * BUFFER_SIZE, HAL_MAX_DELAY);
-
-    }
+//	static int16_t audio_data[2 * BUFFER_SIZE];
+//    for (int i = 0; i < BUFFER_SIZE; i++) {
+//        int16_t value = (int16_t)(32000.0 * sin(2.0 * 3.14 * i / 22.0));
+//        audio_data[i * 2] = value;
+//        audio_data[i * 2 + 1] = value;
+//    }
+//
+//    for(int i = 0; i < 100; ++i)
+//    {
+//    	pack.codec.setVolume(i);
+//    	HAL_Delay(100);
+//        HAL_I2S_Transmit(&hi2s2, (uint16_t*)audio_data, 2 * BUFFER_SIZE, HAL_MAX_DELAY);
+//
+//    }
 
 
   bool last_state = false;

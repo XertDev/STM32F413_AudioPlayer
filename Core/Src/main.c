@@ -56,6 +56,9 @@ TIM_HandleTypeDef htim9;
 SRAM_HandleTypeDef hsram1;
 SRAM_HandleTypeDef hsram2;
 
+FIL file;
+uint8_t sound[8172];
+unsigned int br;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -836,10 +839,13 @@ static void MX_FSMC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-// todo later
-//void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {}
-//
-//void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {}
+void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
+	f_read(&file, sound, sizeof(sound) / 2, &br);
+}
+
+void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
+	f_read(&file, sound + (sizeof(sound) / 2), sizeof(sound) / 2, &br);
+}
 /* USER CODE END 4 */
 
 /**

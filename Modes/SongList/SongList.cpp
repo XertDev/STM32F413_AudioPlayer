@@ -158,8 +158,10 @@ static void draw_background(LCDDisplay& display)
 
 	//left button
 	display.fillRect(0, 200, 118, 40, navigation_color);
+	display.drawString(210, 40, "<");
 	//right button
 	display.fillRect(122, 200, 118, 40, navigation_color);
+	display.drawString(210, 160, ">");
 	//separator
 	display.fillRect(118, 200, 4, 40, separator_color);
 

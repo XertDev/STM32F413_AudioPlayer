@@ -7,6 +7,9 @@
 extern RTC_HandleTypeDef hrtc;
 extern LPTIM_HandleTypeDef hlptim1;
 extern I2S_HandleTypeDef hi2s2;
+extern FIL file;
+extern uint8_t sound[8172];
+extern unsigned int br;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -18,10 +21,11 @@ constexpr uint8_t preferred_backlight = 10;
 extern bool detected_touch;
 extern bool timeout_lptim;
 
-static void draw_background(LCDDisplay& display, bool paused);
+static void draw_background(LCDDisplay& display);
+static void draw_play_pause(LCDDisplay& display, bool paused);
 
 void player(uint8_t* modes_stack, PeripheralsPack& pack) {
-	draw_background(pack.lcd_display, true);
+	draw_background(pack.lcd_display);
 	pack.lcd_display.setBackgroundColor(background);
 
 	pack.lcd_display.setTextColor(0x19AA);
@@ -32,15 +36,14 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 
 	bool jump = false;
 
-	bool paused = true;
+	bool paused = false;
 
-	FIL file;
 	pack.storage.openFile("0:/test2.wav", file);
-	uint8_t sound[8172];
 	int8_t header[44];
-	unsigned int br;
 	f_read(&file, header, 44, &br);
-	pack.codec.setVolume(50);
+	pack.codec.setVolume(10);
+	f_read(&file, sound, sizeof(sound), &br);
+	HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t*)sound, sizeof(sound)/2);
 
 	while(true)
 	{
@@ -50,11 +53,6 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 //		HAL_SuspendTick();
 //		HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 //		HAL_ResumeTick();
-
-		if (!paused) {
-			f_read(&file, sound, sizeof(sound), &br);
-			HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)/2, HAL_MAX_DELAY);
-		}
 
 		while(detected_touch)
 		{
@@ -67,6 +65,8 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 					auto touch_info = pack.touch_panel.getPoint(0);
 					if(inRange(touch_info.x, 0, 65) && inRange(touch_info.y, 200, 240))
 					{
+						HAL_I2S_DMAStop(&hi2s2);
+
 						uint8_t* last = modes_stack;
 						while(*last != 0)
 						{
@@ -78,12 +78,15 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 					} else if(inRange(touch_info.x, 160, 240) && inRange(touch_info.y, 120, 240))
 					{
 						paused = !paused;
-						draw_background(pack.lcd_display, paused);
+						if (paused) {
+							HAL_I2S_DMAPause(&hi2s2);
+						} else {
+							HAL_I2S_DMAResume(&hi2s2);
+						}
+						draw_play_pause(pack.lcd_display, paused);
 					} else if(inRange(touch_info.x, 160, 240) && inRange(touch_info.y, 0, 120))
 					{
-						paused = true;
-						f_read(&file, header, 44, &br);
-						draw_background(pack.lcd_display, true);
+						// todo
 					}
 				}
 			}
@@ -97,7 +100,7 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 }
 
 
-static void draw_background(LCDDisplay& display, bool paused)
+static void draw_background(LCDDisplay& display)
 {
 	display.clear(background);
 
@@ -112,11 +115,17 @@ static void draw_background(LCDDisplay& display, bool paused)
 
 	//left button
 	display.fillRect(0, 160, 118, 80, navigation_color);
-	display.drawString(10, 190, paused ? "PLAY" : "PAUSE");
+	display.drawString(10, 190, "PAUSE");
 	//right button
 	display.fillRect(122, 160, 118, 80, navigation_color);
-	display.drawString(130, 190, "STOP");
+	display.drawString(130, 190, "NEXT");
 	//separator
 	display.fillRect(118, 160, 4, 80, separator_color);
 
+}
+
+static void draw_play_pause(LCDDisplay& display, bool paused)
+{
+	display.fillRect(0, 160, 118, 80, navigation_color);
+	display.drawString(10, 190, paused ? "PLAY" : "PAUSE");
 }
