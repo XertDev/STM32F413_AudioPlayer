@@ -7,6 +7,9 @@ extern bool timeout_lptim;
 
 extern LPTIM_HandleTypeDef hlptim1;
 
+extern char** filenames;
+extern int files_size;
+extern int file_index;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -21,12 +24,13 @@ constexpr uint8_t target_backlight_level = 100;
 
 
 static void draw_background(LCDDisplay& display);
-static void update_file_list(char* entries, LCDDisplay& display);
+static void update_file_list(char** entries, int index, LCDDisplay& display);
 
-
+static void init_file_list(Storage storage);
 
 void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 {
+		init_file_list(pack.storage);
 		draw_background(pack.lcd_display);
 		pack.lcd_display.setBackgroundColor(background);
 		for(uint8_t i = pack.lcd_display.backlight(); i <= target_backlight_level; ++i)
@@ -35,31 +39,13 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 			HAL_Delay(5);
 		}
 
-		uint16_t directory_offset = 0;
-		bool update_list = true;
-		auto scanner = pack.storage.entriesInDirectoryScanner("/");
-		char entries[3 * 18];
-		memset(entries, 0, 18*3);
-
-		for(int i = 0; i < 3; ++i)
-		{
-			if(scanner.valid())
-			{
-				auto& file_info = scanner.fileInfo();
-				strncpy(&(entries[i*18]), file_info.fname, 17);
-			}
-			scanner.next();
-		}
+		int index = 0;
+		update_file_list(filenames, index, pack.lcd_display);
 
 		bool jump = false;
 
 		while(true)
 		{
-			if(update_list)
-			{
-				update_file_list(entries, pack.lcd_display);
-				update_list = false;
-			}
 
 			if(HAL_LPTIM_Counter_Start_IT(&hlptim1, 15360) != HAL_OK) {
 				Error_Handler();
@@ -89,7 +75,7 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							jump = true;
 						} else if(inRange(touch_info.x, 50, 100) && inRange(touch_info.y, 0, 240))
 						{
-							// todo: player logic
+							file_index = index;
 							uint8_t* last = modes_stack;
 							while(*last != 0)
 							{
@@ -100,26 +86,42 @@ void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 							jump = true;
 						} else if(inRange(touch_info.x, 100, 150) && inRange(touch_info.y, 0, 240))
 						{
-							// todo: player logic
-							uint8_t* last = modes_stack;
-							while(*last != 0)
-							{
-								++last;
+							if(index+1 < files_size) {
+								file_index = index+1;
+								uint8_t* last = modes_stack;
+								while(*last != 0)
+								{
+									++last;
+								}
+								--last;
+								*last = 7;
+								jump = true;
 							}
-							--last;
-							*last = 7;
-							jump = true;
 						} else if(inRange(touch_info.x, 150, 200) && inRange(touch_info.y, 0, 240))
 						{
-							// todo: player logic
-							uint8_t* last = modes_stack;
-							while(*last != 0)
-							{
-								++last;
+							if(index+2 < files_size) {
+								file_index = index+2;
+								uint8_t* last = modes_stack;
+								while(*last != 0)
+								{
+									++last;
+								}
+								--last;
+								*last = 7;
+								jump = true;
 							}
-							--last;
-							*last = 7;
-							jump = true;
+						} else if(inRange(touch_info.x, 200, 240) && inRange(touch_info.y, 120, 240))
+						{
+							if(index-3 >= 0) {
+								index -= 3;
+								update_file_list(filenames, index, pack.lcd_display);
+							}
+						} else if(inRange(touch_info.x, 200, 240) && inRange(touch_info.y, 0, 120))
+						{
+							if(index+3 < files_size) {
+								index += 3;
+								update_file_list(filenames, index, pack.lcd_display);
+							}
 						}
 					}
 				}
@@ -158,24 +160,55 @@ static void draw_background(LCDDisplay& display)
 
 	//left button
 	display.fillRect(0, 200, 118, 40, navigation_color);
-	display.drawString(210, 40, "<");
+	display.drawString(20, 210, "PREV");
 	//right button
 	display.fillRect(122, 200, 118, 40, navigation_color);
-	display.drawString(210, 160, ">");
+	display.drawString(140, 210, "NEXT");
 	//separator
 	display.fillRect(118, 200, 4, 40, separator_color);
 
 }
 
-static void update_file_list(char* entries, LCDDisplay& display)
+static void update_file_list(char** entries, int index, LCDDisplay& display)
 {
 	display.fillRect(0, 40, 240, 160, background);
 	for(int i = 0; i < 3; ++i)
 	{
-		display.drawString(10, 65 + 50*i, &(entries[i*18]));
+		if(index+i < files_size) {
+			char* name = new char[18];
+			strncpy(name, entries[index+i], 18);
+			display.drawString(10, 65 + 50*i, name);
+			delete name;
+		}
 	}
 	for(int i = 0; i < 2; ++i)
 	{
 		display.fillRect(0, 96 + 50*i, 240, 3, bar_color);
+	}
+}
+
+static void init_file_list(Storage storage) {
+	if (files_size > 0) {
+		for(int i = 0; i < files_size; i++) {
+			delete filenames[i];
+		}
+		delete filenames;
+	}
+
+	auto scanner = storage.entriesInDirectoryScanner("/");
+	files_size = 0;
+	while (scanner.valid())
+	{
+		files_size++;
+		scanner.next();
+	}
+
+	scanner = storage.entriesInDirectoryScanner("/");
+	filenames = new char*[files_size];
+	for(int i = 0; i < files_size; i++) {
+		auto& file_info = scanner.fileInfo();
+		filenames[i] = new char[strlen(file_info.fname)+1];
+		strcpy(filenames[i], file_info.fname);
+		scanner.next();
 	}
 }

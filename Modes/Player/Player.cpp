@@ -3,13 +3,19 @@
 #include "main.h"
 #include <stdio.h>
 #include "Utils.hpp"
+#include <memory.h>
 
 extern RTC_HandleTypeDef hrtc;
 extern LPTIM_HandleTypeDef hlptim1;
 extern I2S_HandleTypeDef hi2s2;
+
 extern FIL file;
 extern uint8_t sound[8172];
 extern unsigned int br;
+
+extern char** filenames;
+extern int files_size;
+extern int file_index;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -38,7 +44,10 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 
 	bool paused = false;
 
-	pack.storage.openFile("0:/test2.wav", file);
+	char* pocz = new char[3];
+	strcpy(pocz, "0:/");
+
+	pack.storage.openFile(strcat(pocz, filenames[file_index]), file);
 	int8_t header[44];
 	f_read(&file, header, 44, &br);
 	pack.codec.setVolume(10);
@@ -86,7 +95,17 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 						draw_play_pause(pack.lcd_display, paused);
 					} else if(inRange(touch_info.x, 160, 240) && inRange(touch_info.y, 0, 120))
 					{
-						// todo
+						file_index++;
+						file_index %= files_size;
+						HAL_I2S_DMAStop(&hi2s2);
+						uint8_t* last = modes_stack;
+						while(*last != 0)
+						{
+							++last;
+						}
+						--last;
+						*last = 7;
+						jump = true;
 					}
 				}
 			}
@@ -111,7 +130,10 @@ static void draw_background(LCDDisplay& display)
 	display.fillRect(50, 0, 190, 40, bar_color);
 	display.drawString(60, 10, "Player");
 
-	display.drawString(10, 90, "tytul piosenki");
+	char* name = new char[18];
+	strncpy(name, filenames[file_index], 18);
+	display.drawString(10, 90, name);
+	delete name;
 
 	//left button
 	display.fillRect(0, 160, 118, 80, navigation_color);

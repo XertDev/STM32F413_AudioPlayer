@@ -59,6 +59,10 @@ SRAM_HandleTypeDef hsram2;
 FIL file;
 uint8_t sound[8172];
 unsigned int br;
+
+char** filenames;
+int files_size = 0;
+int file_index;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
