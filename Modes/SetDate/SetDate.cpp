@@ -9,7 +9,7 @@ extern LPTIM_HandleTypeDef hlptim1;
 
 RTC_DateTypeDef date;
 char date_buffer[11];
-extern RTC_TimeTypeDef time;
+RTC_TimeTypeDef time_b;
 
 constexpr Color background = from_r8g8b8(238, 244, 237);
 constexpr Color back_button_color = from_r8g8b8(255, 0, 0);
@@ -38,9 +38,9 @@ void setDate(uint8_t* modes_stack, PeripheralsPack& pack) {
 		HAL_Delay(5);
 	}
 
-	HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&hrtc, &time_b, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
-	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
 	pack.lcd_display.drawString(35, 75, date_buffer);
 
 	bool jump = false;
@@ -132,20 +132,36 @@ void saveDate() {
 }
 
 void changeDay(int sign, LCDDisplay& display) {
-	date.Date = (uint8_t) (((int) date.Date + sign)%31 + 1);
-	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
+	if (sign == -1 && date.Date == 1) {
+		date.Date = 31;
+	} else if (sign == 1 && date.Date == 31) {
+		date.Date = 1;
+	} else {
+		date.Date = (uint8_t) ((int) date.Date + sign)%32;
+	}
+	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 
 void changeMonth(int sign, LCDDisplay& display) {
-	date.Month = (uint8_t) (((int) date.Month + sign)%12 + 1);
-	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
+	if (sign == -1 && date.Month == 1) {
+		date.Month = 12;
+	} else if (sign == 1 && date.Month == 12) {
+		date.Month = 1;
+	} else {
+		date.Month = (uint8_t) ((int) date.Month + sign)%13;
+	}
+	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 
 void changeYear(int sign, LCDDisplay& display) {
-	date.Year = date.Year + sign;
-	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
+	if (sign == -1 && date.Year == 0) {
+		date.Year = 99;
+	} else {
+		date.Year = (uint8_t) ((int) date.Year + sign)%100;
+	}
+	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 
@@ -164,6 +180,7 @@ static void draw_background(LCDDisplay& display)
 	display.fillRect(50, 0, 140, 40, bar_color);
 	display.drawString(60, 10, "Date");
 
+	// day
 	//left button
 	display.fillRect(0, 100, 118, 40, navigation_color);
 	display.drawString(50, 110, "D+");
@@ -173,6 +190,7 @@ static void draw_background(LCDDisplay& display)
 	//separator
 	display.fillRect(118, 100, 4, 40, separator_color);
 
+	// month
 	//left button
 	display.fillRect(0, 150, 118, 40, navigation_color);
 	display.drawString(50, 160, "M+");
@@ -182,6 +200,7 @@ static void draw_background(LCDDisplay& display)
 	//separator
 	display.fillRect(118, 150, 4, 40, separator_color);
 
+	// year
 	//left button
 	display.fillRect(0, 200, 118, 40, navigation_color);
 	display.drawString(50, 210, "Y+");

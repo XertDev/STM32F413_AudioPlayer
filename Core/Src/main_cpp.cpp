@@ -71,26 +71,11 @@ void main_cpp()
 	pack.touch_panel.id();
 	pack.touch_panel.setThreshhold(20);
 
-	auto test  =pack.codec.id();
-
 	pack.codec.init(audio::OUTPUT_DEVICE::HEADPHONE, audio::FREQUENCY::FREQ_44K);
 	pack.codec.setVolume(10);
 
 	#define BUFFER_SIZE		2200
 	pack.storage.init(hsd);
-//	FIL file;
-//	pack.storage.openFile("0:/test2.wav", file);
-//	uint8_t sound[8172];
-//	int8_t header[44];
-//	unsigned int br;
-//	f_read(&file, header, 44, &br);
-//	pack.codec.setVolume(50);
-//	while(true)
-//	{
-//		f_read(&file, sound, sizeof(sound), &br);
-//        HAL_I2S_Transmit(&hi2s2, (uint16_t*)sound, sizeof(sound)/2, HAL_MAX_DELAY);
-//	}
-
 
 	uint8_t modes_stack[16] = {1, 0};
 	void (*modes[])(uint8_t* modes_stack, PeripheralsPack& pack) =
@@ -116,25 +101,6 @@ void main_cpp()
 		}
 		modes[next-1](modes_stack, pack);
 	}
-
-	//main_menu(modes_stack, pack);
-	//song_list(modes_stack, pack);
-
-
-//	static int16_t audio_data[2 * BUFFER_SIZE];
-//    for (int i = 0; i < BUFFER_SIZE; i++) {
-//        int16_t value = (int16_t)(32000.0 * sin(2.0 * 3.14 * i / 22.0));
-//        audio_data[i * 2] = value;
-//        audio_data[i * 2 + 1] = value;
-//    }
-//
-//    for(int i = 0; i < 100; ++i)
-//    {
-//    	pack.codec.setVolume(i);
-//    	HAL_Delay(100);
-//        HAL_I2S_Transmit(&hi2s2, (uint16_t*)audio_data, 2 * BUFFER_SIZE, HAL_MAX_DELAY);
-//
-//    }
 
 
   bool last_state = false;

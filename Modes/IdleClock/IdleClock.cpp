@@ -56,7 +56,7 @@ void updateClock(LCDDisplay* display) {
 	HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
 
 	sprintf(time_buffer, "%2d:%02d", time.Hours, time.Minutes);
-	sprintf(date_buffer, "%2d.%02d.%04d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
 
 	display->drawString(77, 90, time_buffer);
 	display->drawString(35, 120, date_buffer);
