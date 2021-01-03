@@ -26,11 +26,8 @@ constexpr uint8_t target_backlight_level = 100;
 static void draw_background(LCDDisplay& display);
 static void update_file_list(char** entries, int index, LCDDisplay& display);
 
-static void init_file_list(Storage storage);
-
 void songList(uint8_t* modes_stack, PeripheralsPack& pack)
 {
-		init_file_list(pack.storage);
 		draw_background(pack.lcd_display);
 		pack.lcd_display.setBackgroundColor(background);
 		for(uint8_t i = pack.lcd_display.backlight(); i <= target_backlight_level; ++i)
@@ -184,31 +181,5 @@ static void update_file_list(char** entries, int index, LCDDisplay& display)
 	for(int i = 0; i < 2; ++i)
 	{
 		display.fillRect(0, 96 + 50*i, 240, 3, bar_color);
-	}
-}
-
-static void init_file_list(Storage storage) {
-	if (files_size > 0) {
-		for(int i = 0; i < files_size; i++) {
-			delete filenames[i];
-		}
-		delete filenames;
-	}
-
-	auto scanner = storage.entriesInDirectoryScanner("/");
-	files_size = 0;
-	while (scanner.valid())
-	{
-		files_size++;
-		scanner.next();
-	}
-
-	scanner = storage.entriesInDirectoryScanner("/");
-	filenames = new char*[files_size];
-	for(int i = 0; i < files_size; i++) {
-		auto& file_info = scanner.fileInfo();
-		filenames[i] = new char[strlen(file_info.fname)+1];
-		strcpy(filenames[i], file_info.fname);
-		scanner.next();
 	}
 }

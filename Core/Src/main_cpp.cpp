@@ -8,6 +8,8 @@
 #include "SetDate/SetDate.hpp"
 #include "Player/Player.hpp"
 #include <cmath>
+#include <memory.h>
+#include "Utils.hpp"
 
 extern TIM_HandleTypeDef htim9;
 extern SD_HandleTypeDef hsd;
@@ -16,6 +18,9 @@ extern I2S_HandleTypeDef hi2s2;
 
 extern bool detected_touch;
 
+extern char** filenames;
+extern int files_size;
+extern int file_index;
 
 void resetFMPI2C() {
 	HAL_FMPI2C_DeInit(&hfmpi2c1);
@@ -53,6 +58,8 @@ uint8_t gesture = 0;
 touch::TouchPoint point;
 touch::TouchDetails details;
 
+static void init_file_list(Storage storage);
+
 extern "C" void main_cpp();
 void main_cpp()
 {
@@ -76,6 +83,8 @@ void main_cpp()
 
 	#define BUFFER_SIZE		2200
 	pack.storage.init(hsd);
+
+	init_file_list(pack.storage);
 
 	uint8_t modes_stack[16] = {1, 0};
 	void (*modes[])(uint8_t* modes_stack, PeripheralsPack& pack) =
@@ -170,4 +179,30 @@ void main_cpp()
 		  last_state = false;
 	  }
   }
+}
+
+static void init_file_list(Storage storage) {
+	if (files_size > 0) {
+		for(int i = 0; i < files_size; i++) {
+			delete filenames[i];
+		}
+		delete filenames;
+	}
+
+	auto scanner = storage.entriesInDirectoryScanner("/");
+	files_size = 0;
+	while (scanner.valid())
+	{
+		files_size++;
+		scanner.next();
+	}
+
+	scanner = storage.entriesInDirectoryScanner("/");
+	filenames = new char*[files_size];
+	for(int i = 0; i < files_size; i++) {
+		auto& file_info = scanner.fileInfo();
+		filenames[i] = new char[strlen(file_info.fname)+1];
+		strcpy(filenames[i], file_info.fname);
+		scanner.next();
+	}
 }
