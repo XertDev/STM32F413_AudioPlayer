@@ -40,7 +40,7 @@ void setDate(uint8_t* modes_stack, PeripheralsPack& pack) {
 
 	HAL_RTC_GetTime(&hrtc, &time_b, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &date, RTC_FORMAT_BIN);
-	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d r.", date.Date, date.Month, date.Year);
 	pack.lcd_display.drawString(35, 75, date_buffer);
 
 	bool jump = false;
@@ -139,7 +139,7 @@ void changeDay(int sign, LCDDisplay& display) {
 	} else {
 		date.Date = (uint8_t) ((int) date.Date + sign)%32;
 	}
-	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d r.", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 
@@ -151,7 +151,7 @@ void changeMonth(int sign, LCDDisplay& display) {
 	} else {
 		date.Month = (uint8_t) ((int) date.Month + sign)%13;
 	}
-	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d r.", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 
@@ -161,7 +161,7 @@ void changeYear(int sign, LCDDisplay& display) {
 	} else {
 		date.Year = (uint8_t) ((int) date.Year + sign)%100;
 	}
-	sprintf(date_buffer, "%2d.%02d.%02d", date.Date, date.Month, date.Year);
+	sprintf(date_buffer, "%2d.%02d.%02d r.", date.Date, date.Month, date.Year);
 	display.drawString(35, 75, date_buffer);
 }
 

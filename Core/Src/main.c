@@ -844,11 +844,15 @@ static void MX_FSMC_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
-	f_read(&file, sound, sizeof(sound) / 2, &br);
+	if(!f_eof(&file)) {
+		f_read(&file, sound, sizeof(sound) / 2, &br);
+	}
 }
 
 void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
-	f_read(&file, sound + (sizeof(sound) / 2), sizeof(sound) / 2, &br);
+	if(!f_eof(&file)) {
+		f_read(&file, sound + (sizeof(sound) / 2), sizeof(sound) / 2, &br);
+	}
 }
 /* USER CODE END 4 */
 

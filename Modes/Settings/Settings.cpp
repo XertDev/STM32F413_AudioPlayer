@@ -135,12 +135,12 @@ static void draw_background(LCDDisplay& display)
 static void draw_time_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(30, 80, 80, 80, time_color);
-	display.drawString(40, 90, "T");
+	display.drawString(35, 110, "Time");
 }
 
 static void draw_date_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(130, 80, 80, 80, date_color);
-	display.drawString(140, 90, "D");
+	display.drawString(135, 110, "Date");
 }
 

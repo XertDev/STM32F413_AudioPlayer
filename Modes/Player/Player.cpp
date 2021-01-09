@@ -63,6 +63,21 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 //		HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 //		HAL_ResumeTick();
 
+		if(f_eof(&file))
+		{
+			file_index++;
+			file_index %= files_size;
+			HAL_I2S_DMAStop(&hi2s2);
+			uint8_t* last = modes_stack;
+			while(*last != 0)
+			{
+				++last;
+			}
+			--last;
+			*last = 7;
+			jump = true;
+		}
+
 		while(detected_touch)
 		{
 //			HAL_LPTIM_Counter_Stop_IT(&hlptim1);
