@@ -44,10 +44,12 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 
 	bool paused = false;
 
-	char* pocz = new char[3];
+	char* pocz = new char[4+strlen(filenames[file_index])];
 	strcpy(pocz, "0:/");
-
+	pack.storage.closeFile(file);
 	pack.storage.openFile(strcat(pocz, filenames[file_index]), file);
+	delete[] pocz;
+
 	int8_t header[44];
 	f_read(&file, header, 44, &br);
 	pack.codec.setVolume(50);

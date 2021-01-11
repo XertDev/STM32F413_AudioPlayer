@@ -22,6 +22,7 @@ public:
 
 	StorageErrors entriesInDirectoryCount(const char* dir_name, uint8_t& count);
 	bool openFile(const char *name, FIL& file);
+	void closeFile(FIL& fil);
 
 	struct DirectoryScanner
 	{

@@ -175,10 +175,10 @@ static void update_file_list(char** entries, int index, LCDDisplay& display)
 	for(int i = 0; i < 3; ++i)
 	{
 		if(index+i < files_size) {
-			char* name = new char[18];
-			strncpy(name, entries[index+i], 18);
-			display.drawString(10, 65 + 50*i, name);
-			delete name;
+			char name[18];
+			name[17] = 0;
+			strncpy(name, entries[index+i], 17);
+			display.drawString(10, 65 + 50*i, entries[index+i]);
 		}
 	}
 	for(int i = 0; i < 2; ++i)

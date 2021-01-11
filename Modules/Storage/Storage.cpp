@@ -99,6 +99,10 @@ bool Storage::openFile(const char *name, FIL& file) {
 	return error == FR_OK;
 }
 
+void Storage::closeFile(FIL& fil) {
+	f_close(&fil);
+}
+
 Storage::DirectoryScanner Storage::entriesInDirectoryScanner(const char *dir_name) {
 	return DirectoryScanner(dir_name);
 }
