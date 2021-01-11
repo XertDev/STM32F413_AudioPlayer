@@ -50,7 +50,7 @@ void player(uint8_t* modes_stack, PeripheralsPack& pack) {
 	pack.storage.openFile(strcat(pocz, filenames[file_index]), file);
 	int8_t header[44];
 	f_read(&file, header, 44, &br);
-	pack.codec.setVolume(10);
+	pack.codec.setVolume(50);
 	f_read(&file, sound, sizeof(sound), &br);
 	HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t*)sound, sizeof(sound)/2);
 
@@ -140,9 +140,11 @@ static void draw_background(LCDDisplay& display)
 
 	//back button
 	display.fillRect(0, 0, 50, 40, back_button_color);
+	display.setBackgroundColor(back_button_color);
 	display.drawString(10, 10, "X");
 	//top bar
 	display.fillRect(50, 0, 190, 40, bar_color);
+	display.setBackgroundColor(bar_color);
 	display.drawString(60, 10, "Player");
 
 	char* name = new char[18];
@@ -152,6 +154,7 @@ static void draw_background(LCDDisplay& display)
 
 	//left button
 	display.fillRect(0, 160, 118, 80, navigation_color);
+	display.setBackgroundColor(navigation_color);
 	display.drawString(10, 190, "PAUSE");
 	//right button
 	display.fillRect(122, 160, 118, 80, navigation_color);
@@ -164,5 +167,6 @@ static void draw_background(LCDDisplay& display)
 static void draw_play_pause(LCDDisplay& display, bool paused)
 {
 	display.fillRect(0, 160, 118, 80, navigation_color);
+	display.setBackgroundColor(navigation_color);
 	display.drawString(10, 190, paused ? "PLAY" : "PAUSE");
 }

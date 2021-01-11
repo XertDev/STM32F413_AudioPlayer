@@ -150,17 +150,21 @@ static void draw_background(LCDDisplay& display)
 
 	//back button
 	display.fillRect(0, 0, 50, 40, back_button_color);
+	display.setBackgroundColor(back_button_color);
 	display.drawString(10, 10, "X");
 	//save button
 	display.fillRect(190, 0, 50, 40, save_button_color);
+	display.setBackgroundColor(save_button_color);
 	display.drawString(210, 10, "S");
 	//top bar
 	display.fillRect(50, 0, 140, 40, bar_color);
+	display.setBackgroundColor(bar_color);
 	display.drawString(60, 10, "Time");
 
 	// hour
 	//left button
 	display.fillRect(0, 150, 118, 40, navigation_color);
+	display.setBackgroundColor(navigation_color);
 	display.drawString(50, 160, "H+");
 	//right button
 	display.fillRect(122, 150, 118, 40, navigation_color);

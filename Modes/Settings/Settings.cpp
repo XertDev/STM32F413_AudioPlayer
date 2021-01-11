@@ -118,9 +118,11 @@ static void draw_background(LCDDisplay& display)
 
 	//back button
 	display.fillRect(0, 0, 50, 40, back_button_color);
+	display.setBackgroundColor(back_button_color);
 	display.drawString(10, 10, "X");
 	//top bar
 	display.fillRect(50, 0, 190, 40, bar_color);
+	display.setBackgroundColor(bar_color);
 	display.drawString(60, 10, "Settings");
 
 	//shade behind date button
@@ -135,12 +137,14 @@ static void draw_background(LCDDisplay& display)
 static void draw_time_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(30, 80, 80, 80, time_color);
+	display.setBackgroundColor(time_color);
 	display.drawString(35, 110, "Time");
 }
 
 static void draw_date_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(130, 80, 80, 80, date_color);
+	display.setBackgroundColor(date_color);
 	display.drawString(135, 110, "Date");
 }
 

@@ -116,12 +116,14 @@ static void draw_background(LCDDisplay& display)
 static void draw_settings_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(30, 80, 80, 80, settings_color);
+	display.setBackgroundColor(settings_color);
 	display.drawString(45, 110, "Set");
 }
 
 static void draw_player_button(LCDDisplay& display, bool highlighted)
 {
 	display.fillRect(130, 80, 80, 80, player_color);
+	display.setBackgroundColor(player_color);
 	display.drawString(135, 110, "List");
 }
 
